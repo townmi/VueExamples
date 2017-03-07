@@ -8,10 +8,9 @@ const path = require('path');
 
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const cssnano = require('cssnano');
+var ExtractTextPlugin = require('extract-text-webpack-plugin');
 const rimraf = require('rimraf');
 const argv = require('yargs').argv;
-
 var vue = require("vue-loader");
 
 const debug = require('debug')('app:webpack:config');
@@ -56,24 +55,15 @@ const webpackConfig = {
         extensions: ['', '.js', '.vue', '.json']
     },
     module: {
-        preLoaders: [
-            {
-                test: /\.vue$/,
-                loader: 'eslint',
-                include: '../',
-                exclude: /node_modules/
-            },
-            {
-                test: /\.js$/,
-                loader: 'eslint',
-                include: '../',
-                exclude: /node_modules/
-            }
-        ]
     },
     babel: {
         presets: ['es2015'],
         plugins: ['transform-runtime']
+    },
+    vue: {
+        loaders: {
+            css: ExtractTextPlugin.extract({ fallback: 'vue-style-loader', use: ['css-loader', 'sass-loader'] })
+        }
     }
 };
 
@@ -108,28 +98,16 @@ webpackConfig.plugins = [
             collapseWhitespace: true
         }
     })
-    // http://vuejs.github.io/vue-loader/en/workflow/production.html
-    // new webpack.DefinePlugin({
-    //     'process.env': "env"
-    // }),
-    // new webpack.optimize.UglifyJsPlugin({
-    //     compress: {
-    //         warnings: false
-    //     },
-    //     sourceMap: true
-    // })
 ];
 
-const BASE_CSS_LOADER = 'css?sourceMap&-minimize';
-
 webpackConfig.module.loaders = [{
-    test: /\.(js|vue)$/,
+    test: /\.(js)$/,
     exclude: /node_modules/,
     loader: 'babel',
     query: {
         cacheDirectory: true,
         plugins: ['transform-runtime'],
-        presets: ['es2015', 'stage-0']
+        presets: ['es2015']
     }
 }, {
     test: /\.json$/,
@@ -141,48 +119,10 @@ webpackConfig.module.loaders.push({
     loader: 'vue-loader',
     options: {
         loaders: {
-            js: 'babel?presets=es2015'
+            'scss': 'vue-style-loader!css-loader!sass-loader'
         }
     }
 });
 
-webpackConfig.module.loaders.push({
-    test: /\.scss$/,
-    exclude: null,
-    loaders: [
-        'style',
-        BASE_CSS_LOADER,
-        'postcss',
-        'sass?sourceMap'
-    ]
-});
-
-webpackConfig.module.loaders.push({
-    test: /\.css$/,
-    exclude: null,
-    loaders: [
-        'style',
-        BASE_CSS_LOADER,
-        'postcss'
-    ]
-});
-
-webpackConfig.postcss = [
-    cssnano({
-        autoprefixer: {
-            add: true,
-            remove: true,
-            browsers: ['last 2 versions']
-        },
-        discardComments: {
-            removeAll: true
-        },
-        discardUnused: false,
-        mergeIdents: false,
-        reduceIdents: false,
-        safe: true,
-        sourcemap: true
-    })
-];
 
 module.exports = webpackConfig;

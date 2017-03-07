@@ -1,3 +1,18 @@
+<style lang="sass" scoped>
+.root {
+    .fixed-action-btn {
+        ul .btn-floating {
+            transform: scaleY(0.4) scaleX(0.4) translateY(40px) translateX(0px);
+        }
+        &.active {
+            ul .btn-floating {
+                transform: scaleY(1) scaleX(1) translateY(0px) translateX(0px);
+                opacity: 1;
+            }
+        }
+    }
+}
+</style>
 <template>
     <div class="root">
         <nav class="blue accent-4">
@@ -9,7 +24,7 @@
             </div>
         </nav>
         <div class="container">
-            <Home />
+            <cm-home></cm-home>
         </div>
         <footer class="page-footer blue accent-4">
             <div class="container">
@@ -34,7 +49,7 @@
             </div>
         </footer>
 
-        <div class="fixed-action-btn">
+        <div v-bind:class="fixActionClass" v-on:mouseover="fixActionShow" v-on:mouseout="fixActionHide">
             <a class="btn-floating btn-large red">
                 <i class="large material-icons">mode_edit</i>
             </a>
@@ -48,10 +63,26 @@
         </div>
     </div>
 </template>
-<script>
+<script type="text/babel">
+    import Vue from 'vue';
+	import Home from './compontents/Home.vue';
 
-	import Home from './compontents/Home';
+    Vue.component('cm-home', Home);
+
     export default {
-
+        name: 'root',
+        data () {
+            return {
+                fixActionClass: "fixed-action-btn"
+            }
+        },
+        methods: {
+            fixActionShow: function (event) {
+                this.fixActionClass = "fixed-action-btn active";
+            },
+            fixActionHide: function (event) {
+                this.fixActionClass = "fixed-action-btn";
+            }
+        }
     }
 </script>
