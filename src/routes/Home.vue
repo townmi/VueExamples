@@ -26,6 +26,13 @@
         .collapsible, .row:last-child {
             margin-bottom: 0;
         }
+        .pagination {
+            padding: 15px 0;
+            text-align: center;
+            li.active {
+                background-color: #2962FF;
+            }
+        }
     }
     .collapsible-header {
         span.good, span.top, span.tab {
@@ -41,8 +48,19 @@
         span.tab {
             background-color: #c4c4c4;
         }
+        span.title {
+            width: 70%;
+            position: relative;
+            top: 8px;
+            display: inline-block;
+            line-height: 22px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
         img {
             width: 100%;
+            vertical-align: sub;
         }
     }
     .collapsible-body {
@@ -55,8 +73,8 @@
     <div>
         <nav>
             <div class="nav-wrapper">
-                <ul id="nav-mobile" class="left hide-on-med-and-down" v-for="cell in routers">
-                    <li><a href="#" v-bind:class="'link ' + cell.active" v-on:click="fetch(cell)">{{ cell.title }}</a></li>
+                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                    <li v-for="cell in routers"><a href="#" :class="cell.tab === tab ? 'link active': 'link'" v-on:click="fetch(cell)">{{ cell.title }}</a></li>
                 </ul>
             </div>
         </nav>
@@ -71,16 +89,31 @@
                         <span class="good" v-if="item.good">精华</span>
                         <span class="top" v-if="item.top">置顶</span>
                         <span class="tab" v-if="!item.good && !item.top">{{ routers[item.tab] && routers[item.tab].title }}</span>
-                        {{ item.title }}
+                        <span class="title">{{ item.title }}</span>
                         <span class="badge">{{ item.reply_count + '/' + item.visit_count }}</span>
                     </div>
                     <!--<div class="collapsible-body">{{ 'v-html="item.content"' }}</div>-->
                 </router-link>
             </li>
             <li>
-                <div class="collapsible-header">
-                    {{ page }}
-                </div>
+                <ul class="pagination">
+                    <li :class="page === 1 ? 'disabled' : ''">
+                        <a href="javascript:;" v-on:click="fetch('prev')">
+                            <i class="material-icons">chevron_left</i>
+                        </a>
+                    </li>
+                    <li v-if="page < 4" :class="n == page ? 'active' : ''" v-for="n in 5">
+                        <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
+                    </li>
+                    <li v-if="page > 3 && n > page-3 " :class="n == page ? 'active' : ''" v-for="n in page+2">
+                        <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
+                    </li>
+                    <li :class="lastPage ? 'disabled' : ''">
+                        <a href="javascript:;" v-on:click="fetch('next')">
+                            <i class="material-icons">chevron_right</i>
+                        </a>
+                    </li>
+                </ul>
             </li>
         </ul>
     </div>
@@ -100,6 +133,9 @@
                 inputVal: "",
                 active: "",
                 page: 1,
+                tab: 'all',
+                limit: 10,
+                lastPage: false,
                 dataFetchDown: false,
                 topicList: [],
                 routers: {
@@ -142,23 +178,38 @@
                 },
                 fetch (cell) {
                     let self = this;
+
+                    if( Object.prototype.toString.call(cell) === "[object String]" && (self.lastPage &&  cell === "next" || self.page === 1 && cell === "prev")) {
+                        return false;
+                    }
                     self.dataFetchDown = false;;
                     self.topicList = [];
-                    this.getList(cell.tab)
+
+                    if(Object.prototype.toString.call(cell) === "[object String]") {
+                        cell === "next" ? self.page++ : self.page--;
+                    } else if(Object.prototype.toString.call(cell) === "[object Number]") {
+                        self.page = cell;
+                    } else if(Object.prototype.toString.call(cell) === "[object Object]") {
+                        self.page = 1;
+                        self.tab = cell.tab;
+                    }
+                    this.getList()
                     .then((lastData) => {
                         if(lastData.status === "success") {
-                                self.dataFetchDown = true;
-                                self.topicList = lastData.data;
-                            }
+                            self.dataFetchDown = true;
+                            self.topicList = lastData.data;
+                            self.lastPage = lastData.data.length < self.limit ? true : false;
+                        }
                     });
                 },
-                getList (tab = "all") {
+                getList () {
+                    let self = this;
                     return new Promise((resolve, reject) => {
                         axios.get('https://cnodejs.org/api/v1/topics', {
                             params: {
-                                tab: tab,
+                                tab: self.tab,
                                 page: self.page,
-                                limit: 10
+                                limit: self.limit
                             }
                         })
                         .then((response) => {
@@ -215,7 +266,10 @@
             } else {
                 this.getList()
                 .then((lastData) => {
-                    console.log(lastData)
+                    if(lastData.status === "success") {
+                        self.dataFetchDown = true;
+                        self.topicList = lastData.data;
+                    }
                 });
             }
         }

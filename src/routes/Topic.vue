@@ -37,16 +37,6 @@
                 topic: null
             }
         },
-        render: function (h) {
-            alert(1);
-             h(
-                'div', 
-                [
-                    h('span', 'Hello'),
-                    ' world!'
-                ]
-            )
-        },
         methods: {
             getRoute () {
             }
@@ -55,21 +45,19 @@
             let self = this;
             const topicId  = this.$route.params.id;
             
-            axios.get('https://cnodejs.org/api/v1/topic/'+topicId)
+            axios.get('https://cnodejs.org/api/v1/topic/'+topicId, {
+                params: {
+                    mdrender: true
+                }
+            })
             .then((response) => {
                 self.dataFetchDown = true;
                 self.topic = response.data.data;
+                // self.topic.content = markdown.toHTML( self.topic.content );
             })
             .catch((error) => {
                 console.log(error);
                 self.dataFetchDown = true;
-            });
-        },
-        updated () {
-            var markList = document.querySelectorAll(".prettyprint");
-            markList.forEach(function (cell, index) {
-                // console.log(cell.innerHTML);
-                cell.innerHTML = markdown.toHTML( cell.innerHTML )
             });
         }
     }

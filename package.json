@@ -4,7 +4,9 @@
   "description": "vue learn pro",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --progress --port 9081"
+    "start": "webpack-dev-server --progress --port 9081",
+    "clean": "rimraf dist",
+    "build": "webpack -p:dev"
   },
   "repository": {
     "type": "git",
