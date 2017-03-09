@@ -20,6 +20,31 @@
     .root {
         background-color: #f2f2f2;
     }
+    @media only screen and (max-width: 768px) {
+        nav .nav-wrapper {
+            width: 90%;
+            padding-top: 15px;
+            margin: 0 auto;
+            &>div {
+                line-height: 1em;
+            }
+        }
+
+        span.breadcrumb {
+            display: inline-block;
+            width: 80%;
+            line-height: 22px;
+            position: relative;
+            top: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .body {
+            width: 90%;
+            margin: 0 auto;
+        }
+    }
 </style>
 <template>
     <div class="topic">
@@ -36,7 +61,7 @@
         </nav>
         <div class="row">
             <div class="col s12 m12">
-                <div v-html="topic && topic.content">
+                <div class="body" v-html="topic && topic.content">
                     <!--{{topic && topic.content}}-->
                 </div>
             </div>

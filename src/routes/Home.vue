@@ -68,12 +68,85 @@
             display: none;
         }
     }
+    @media only screen and (max-width: 768px) {
+        nav .nav-wrapper {
+            width: 90%;
+            margin: 0 auto;
+        }
+        nav ul.left {
+            width: 100%;
+            li {
+                width: 20%;
+            }
+            .link {
+                padding: 0;
+                text-align: center;
+            }
+        }
+        .collection {
+            border-left: none;
+            border-right: none;
+            border-radius: 0;
+        }
+        .collection-item {
+            .top-title {
+                height: 22px;
+                .tip {
+                    width: 13%;
+                    float: left;
+                    text-align: center;
+                    border-radius: 2px;
+                    color: #ffffff;
+                    font-size: 12px;
+                    &.good, &.top {
+                        background-color: #2962FF;
+                    }
+                    &.tab {
+                        background-color: #c4c4c4;
+                    }
+                }
+                .title {
+                    width: 85%;
+                    height: 22px;
+                    float: right;
+                    display: inline-block;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
+            }
+            .bottom-user {
+                margin: 1rem 0 0 0;
+                display: flex;
+                &>div {
+                    height: 44px;
+                    flex: 1;
+                }
+                .avatar {
+                    width: 44px;
+                    height: 44px;
+                    border-radius: 5px;
+                    overflow: hidden;
+                    float: left;
+                    margin-right: 10px;
+                }
+                p {
+                    margin: 0;
+                    float: left;
+                    line-height: 22px;
+                    color: #333333;
+                }
+            }
+            img {
+                width: 44px;
+            }
+        }
+    }
 </style>
 <template>
     <div>
         <nav>
             <div class="nav-wrapper">
-                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <ul class="left">
                     <li v-for="cell in routers"><a href="#" :class="cell.tab === tab ? 'link active': 'link'" v-on:click="fetch(cell)">{{ cell.title }}</a></li>
                 </ul>
             </div>
@@ -81,8 +154,8 @@
         <div v-if="!dataFetchDown" class="loading">
             <cm-loading></cm-loading>
         </div>
-        <ul class="collapsible" data-collapsible="accordion" v-if="topicList.length">
-            <li v-for="item in topicList">
+        <ul :class="isMobile ? 'collection' : 'collapsible'" data-collapsible="accordion" v-if="topicList.length">
+            <li v-for="item in topicList" v-if="!isMobile">
                 <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
                     <div class="collapsible-header">
                         <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
@@ -93,6 +166,29 @@
                         <span class="badge">{{ item.reply_count + '/' + item.visit_count }}</span>
                     </div>
                     <!--<div class="collapsible-body">{{ 'v-html="item.content"' }}</div>-->
+                </router-link>
+            </li>
+            <li class="collection-item" v-for="item in topicList" v-if="isMobile">
+                <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
+                    <div class="top-title">
+                        <span class="tip good" v-if="item.good">精华</span>
+                        <span class="tip top" v-if="item.top">置顶</span>
+                        <span class="tip tab" v-if="!item.good && !item.top">{{ routers[item.tab] && routers[item.tab].title }}</span>
+                        <span class="title">{{ item.title }}</span>
+                    </div>
+                    <div class="bottom-user">
+                        <div>
+                            <div class="avatar"><img v-bind:src="item.author.avatar_url"/></div>
+                            <p>
+                                {{ item.author.loginname }}
+                                <br/>
+                                {{ new Date(item.create_at).getFullYear() }}
+                            </p>
+                        </div>
+                        <div>
+                            <span class="badge"><span style="color: #2979ff;">{{ item.reply_count }}</span> {{ '/' + item.visit_count }}</span>
+                        </div>
+                    </div>
                 </router-link>
             </li>
             <li>
@@ -119,6 +215,7 @@
                 </ul>
             </li>
         </ul>
+        <br/>
     </div>
 </template>
 
@@ -141,6 +238,7 @@
                 lastPage: false,
                 dataFetchDown: false,
                 topicList: [],
+                isMobile: /mobile/i.test(navigator.userAgent),
                 routers: {
                     "all": {
                         title: "全部",
@@ -257,7 +355,7 @@
         },
         mounted () {
             let self = this;
-            self.limit = Math.ceil(window.screen.availHeight / 80) ;
+            self.limit = Math.ceil(window.screen.availHeight / 120) ;
             // self.limit = 50;
             if(this.$route && this.$route.params && this.$route.params.tab) {
                 self.tab = this.$route.params.tab;

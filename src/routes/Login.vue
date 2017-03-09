@@ -78,8 +78,7 @@
                         return;
                     }
                     this.submitSwitch = true;
-                    // my own token
-                    const token = "7f53c60e-a8b6-4f34-a7ac-4b7b14d03b02";
+                    
                     axios.post('https://cnodejs.org/api/v1/accesstoken?accesstoken=' + this.token)
                     .then(function (response) {
                         self.submitSwitch = false;

@@ -54,9 +54,8 @@
                 margin-bottom: 20px;
             }
             .body {
-                height: 120px;
                 img {
-                    height: 100%;
+                    width: 80px;
                 }
             }
             
@@ -65,9 +64,54 @@
 </style>
 <template>
         <div class="member">
+            <br/>
             <div class="row">
-                <br/>
-                <div class="col s12 m12">
+                <div class="col s10 m9">
+                    <ul class="collapsible" data-collapsible="accordion" v-if="memberInfo.recent_replies && memberInfo.recent_replies.length">
+                        <li class="block_title">
+                            <div class="collapsible-header">
+                                最近创建的话题
+                            </div>
+                        </li>
+                        <li v-for="item in memberInfo.recent_replies">
+                            <router-link :to="{ name: 'topic', params: { tab: 'all', id: item.id } }">
+                                <div class="collapsible-header">
+                                    <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
+                                    <span class="title">{{ item.title }}</span>
+                                </div>
+                            </router-link>
+                        </li>
+                        <li class="more">
+                            <div class="collapsible-header">
+                                <a>查看更多 &nbsp;<em class="fa fa-angle-right" aria-hidden="true"></em></a>
+                            </div>
+                        </li>
+                    </ul>
+                    <br/>
+                    <ul class="collapsible" data-collapsible="accordion" v-if="memberInfo.recent_topics && memberInfo.recent_topics.length">
+                        <li class="block_title">
+                            <div class="collapsible-header">
+                                最近创建的话题
+                            </div>
+                        </li>
+                        <li v-for="item in memberInfo.recent_topics">
+                            <router-link :to="{ name: 'topic', params: { tab: 'all', id: item.id } }">
+                                <div class="collapsible-header">
+                                    <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
+                                    <span class="title">{{ item.title }}</span>
+                                </div>
+                            </router-link>
+                        </li>
+                        <li class="more">
+                            <div class="collapsible-header">
+                                <a>查看更多 &nbsp;<em class="fa fa-angle-right" aria-hidden="true"></em></a>
+                            </div>
+                        </li>
+                    </ul>
+                    <br/>
+                </div>
+
+                <div class="col s2 m3">
                     <div class="card blue-grey darken-1">
                         <div class="card-content white-text">
                             <span class="card-title">名片</span>
@@ -84,47 +128,7 @@
                 </div>
             </div>
 
-            <ul class="collapsible" data-collapsible="accordion" v-if="memberInfo.recent_replies && memberInfo.recent_replies.length">
-                <li class="block_title">
-                    <div class="collapsible-header">
-                        最近创建的话题
-                    </div>
-                </li>
-                <li v-for="item in memberInfo.recent_replies">
-                    <router-link :to="{ name: 'topic', params: { tab: 'all', id: item.id } }">
-                        <div class="collapsible-header">
-                            <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
-                            <span class="title">{{ item.title }}</span>
-                        </div>
-                    </router-link>
-                </li>
-                <li class="more">
-                    <div class="collapsible-header">
-                        <a>查看更多 &nbsp;<em class="fa fa-angle-right" aria-hidden="true"></em></a>
-                    </div>
-                </li>
-            </ul>
-            <br/>
-            <ul class="collapsible" data-collapsible="accordion" v-if="memberInfo.recent_topics && memberInfo.recent_topics.length">
-                <li class="block_title">
-                    <div class="collapsible-header">
-                        最近创建的话题
-                    </div>
-                </li>
-                <li v-for="item in memberInfo.recent_topics">
-                    <router-link :to="{ name: 'topic', params: { tab: 'all', id: item.id } }">
-                        <div class="collapsible-header">
-                            <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
-                            <span class="title">{{ item.title }}</span>
-                        </div>
-                    </router-link>
-                </li>
-                <li class="more">
-                    <div class="collapsible-header">
-                        <a>查看更多 &nbsp;<em class="fa fa-angle-right" aria-hidden="true"></em></a>
-                    </div>
-                </li>
-            </ul>
+            
 
             <div v-if="!dataFetchDown" class="loading">
                 <cm-loading></cm-loading>

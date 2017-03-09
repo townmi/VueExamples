@@ -25,6 +25,16 @@
         position: relative;
         overflow: hidden;
     }
+    @media only screen and (max-width: 768px) {
+        .container {
+            width: 100%;
+        }
+        footer {
+            .container {
+                width: 90%;
+            }
+        }
+    }
 </style>
 <template>
     <div class="root">
@@ -42,7 +52,7 @@
                         <p class="grey-text text-lighten-4">...</p>
                     </div>
                     <div class="col l4 offset-l2 s12">
-                        <h5 class="white-text">其他系统</h5>
+                        <h5 class="white-text">友情社区</h5>
                         <ul>
                             <li><a class="grey-text text-lighten-3" href="https://cnodejs.org/">cnodejs.org</a></li>
                         </ul>
