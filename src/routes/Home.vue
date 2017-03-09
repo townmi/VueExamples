@@ -83,7 +83,7 @@
         </div>
         <ul class="collapsible" data-collapsible="accordion" v-if="topicList.length">
             <li v-for="item in topicList">
-                <router-link :to="{name:'topic', params:{id: item.id}}">
+                <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
                     <div class="collapsible-header">
                         <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
                         <span class="good" v-if="item.good">精华</span>
@@ -102,10 +102,13 @@
                             <i class="material-icons">chevron_left</i>
                         </a>
                     </li>
-                    <li v-if="page < 4" :class="n == page ? 'active' : ''" v-for="n in 5">
+                    <li v-if="!lastPage && page < 4" :class="n == page ? 'active' : ''" v-for="n in 5">
                         <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
                     </li>
-                    <li v-if="page > 3 && n > page-3 " :class="n == page ? 'active' : ''" v-for="n in page+2">
+                    <li v-if="!lastPage && page > 3 && n > page-3" :class="n == page ? 'active' : ''" v-for="n in page+2">
+                        <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
+                    </li>
+                    <li v-if="lastPage && n > page-5" :class="n == page ? 'active' : ''" v-for="n in page">
                         <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
                     </li>
                     <li :class="lastPage ? 'disabled' : ''">
@@ -193,14 +196,7 @@
                         self.page = 1;
                         self.tab = cell.tab;
                     }
-                    this.getList()
-                    .then((lastData) => {
-                        if(lastData.status === "success") {
-                            self.dataFetchDown = true;
-                            self.topicList = lastData.data;
-                            self.lastPage = lastData.data.length < self.limit ? true : false;
-                        }
-                    });
+                    this.__fetch();
                 },
                 getList () {
                     let self = this;
@@ -227,6 +223,20 @@
                     });
 
                 },
+                __fetch () {
+                    let self = this;
+                    return this.getList()
+                    .then((lastData) => {
+                        if(lastData.status === "success" && !!lastData.data.length) {
+                            self.dataFetchDown = true;
+                            self.topicList = lastData.data;
+                            self.lastPage = lastData.data.length < self.limit ? true : false;
+                        } else {
+                            self.page--;
+                            return self.__fetch();
+                        }
+                    });
+                },
                 authToken (id) {
                     return new Promise((resolve, reject) => {
                         axios.post('https://cnodejs.org/api/v1/accesstoken?accesstoken=' + id)
@@ -247,31 +257,12 @@
         },
         mounted () {
             let self = this;
-            const accessToken = localStorage.getItem("cnode_accesstoken");
-            if(accessToken) {
-                this.authToken(accessToken)
-                .then((lastData) => {
-                    if(lastData.status === "success") {
-                        self.$parent.authStatus = true;
-                        self.$parent.authInfo = lastData.data;
-                    }
-                    return self.getList();
-                })
-                .then((lastData) => {
-                    if(lastData.status === "success") {
-                        self.dataFetchDown = true;
-                        self.topicList = lastData.data;
-                    }
-                })
-            } else {
-                this.getList()
-                .then((lastData) => {
-                    if(lastData.status === "success") {
-                        self.dataFetchDown = true;
-                        self.topicList = lastData.data;
-                    }
-                });
+            self.limit = Math.ceil(window.screen.availHeight / 80) ;
+            // self.limit = 50;
+            if(this.$route && this.$route.params && this.$route.params.tab) {
+                self.tab = this.$route.params.tab;
             }
+            this.__fetch();
         }
     };
 </script>

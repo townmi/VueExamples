@@ -28,21 +28,7 @@
 </style>
 <template>
     <div class="root">
-        <nav class="blue accent-4">
-            <div class="nav-wrapper container">
-                <a href="#" class="brand-logo">CNODE</a>
-                <ul class="right hide-on-med-and-down">
-                    <li><a href="#">首页</a></li>
-                    <li><a href="#">新手入门</a></li>
-                    <li v-if="!authStatus"><router-link to="/login">登录</router-link></li>
-                    <li v-if="authStatus" class="avatar">
-                        <router-link to="#">
-                            <img :src="authInfo && authInfo.avatar_url" :title="authInfo && authInfo.loginname"/>
-                        </router-link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+        <cm-nav></cm-nav>
         <div class="container">
             <div class="content">
                 <router-view></router-view>
@@ -73,7 +59,7 @@
 
         <div v-bind:class="fixActionClass" v-on:mouseover="fixActionShow" v-on:mouseout="fixActionHide">
             <a class="btn-floating btn-large red">
-                <i class="large material-icons">mode_edit</i>
+                <i class="large material-icons">add</i>
             </a>
             <ul>
                 <li><router-link to="/" class="btn-floating red"><i class="material-icons">insert_chart</i></router-link></li>
@@ -85,13 +71,17 @@
     </div>
 </template>
 <script type="text/babel">
+    import Vue from 'vue';
+
+    import NavStatus from './compontents/NavStatus';
+
+    Vue.component('cm-nav', NavStatus);
+
     export default {
         name: 'root',
         data () {
             return {
-                fixActionClass: "fixed-action-btn",
-                authStatus: false,
-                authInfo: null
+                fixActionClass: "fixed-action-btn"
             }
         },
         methods: {

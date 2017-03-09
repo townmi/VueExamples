@@ -41,6 +41,8 @@
     import axios from 'axios';
     import Vue from 'vue';
 
+    import Auth from '../services/authToken';
+
     import Load from '../compontents/Load';
 
     Vue.component('cm-loading', Load);
@@ -89,25 +91,21 @@
                                 'id' : response.data.id,
                                 'accesstoken' : self.token.trim()
                             }
-                            // this.$store.dispatch('setUserInfo', userInfo);
-                            // 登录成功记录账户信息存放至localStorage已备下次自动登录
-                            localStorage.setItem("cnode_accesstoken", userInfo.accesstoken);
-                            localStorage.setItem("cnode_avatar", userInfo.avatar);
-                            localStorage.setItem("cnode_id", userInfo.id);
-                            localStorage.setItem("cnode_name", userInfo.name);
+                            Auth.setLocalToken(userInfo);
+                            window.location.reload();
+
                         } else {
                             alert(response.data.error_msg)
                         }
                         
                     })
                     .catch(function (error) {
-                        console.log(error);
                         self.submitSwitch = false;
                     });
                 }
         },
         mounted () {
-            let self = this;
+
         }
     };
 </script>
