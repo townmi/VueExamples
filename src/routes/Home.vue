@@ -112,6 +112,7 @@
                     display: inline-block;
                     overflow: hidden;
                     text-overflow: ellipsis;
+                    white-space: nowrap;
                 }
             }
             .bottom-user {
@@ -121,23 +122,45 @@
                     height: 44px;
                     flex: 1;
                 }
+                h6 {
+                    margin: 0;
+                    padding: 0;
+                    height: 22px;
+                    line-height: 22px;
+                    text-align: right;
+                    color: #757575;
+                    &:last-child {
+                        padding: 0 6px;
+                    }
+                }
                 .avatar {
-                    width: 44px;
+                    width: 30%;
+                    max-width: 55px;
                     height: 44px;
-                    border-radius: 5px;
+                    line-height: 44px;
                     overflow: hidden;
                     float: left;
-                    margin-right: 10px;
+                    text-align: left;
                 }
                 p {
+                    width: 70%;
                     margin: 0;
                     float: left;
                     line-height: 22px;
                     color: #333333;
+
+                    span {
+                        display: block;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
                 }
             }
             img {
-                width: 44px;
+                width: 80%;
+                vertical-align: middle;
+                border-radius: 5px;
             }
         }
     }
@@ -158,7 +181,9 @@
             <li v-for="item in topicList" v-if="!isMobile">
                 <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
                     <div class="collapsible-header">
-                        <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
+                        <router-link :to="{ name: 'member', params: { username: item.author.loginname } }">
+                            <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
+                        </router-link>
                         <span class="good" v-if="item.good">精华</span>
                         <span class="top" v-if="item.top">置顶</span>
                         <span class="tab" v-if="!item.good && !item.top">{{ routers[item.tab] && routers[item.tab].title }}</span>
@@ -178,15 +203,21 @@
                     </div>
                     <div class="bottom-user">
                         <div>
-                            <div class="avatar"><img v-bind:src="item.author.avatar_url"/></div>
+                            <div class="avatar">
+                                <router-link :to="{ name: 'member', params: { username: item.author.loginname } }">
+                                    <img v-bind:src="item.author.avatar_url"/>
+                                </router-link>
+                            </div>
                             <p>
-                                {{ item.author.loginname }}
-                                <br/>
-                                {{ new Date(item.create_at).getFullYear() }}
+                                <span> {{ item.author.loginname }} </span>
+                                <span> {{ dateToLest(item.create_at) }} </span>
                             </p>
                         </div>
                         <div>
-                            <span class="badge"><span style="color: #2979ff;">{{ item.reply_count }}</span> {{ '/' + item.visit_count }}</span>
+                            <h6>
+                                <span class="badge"><span style="color: #2979ff;">{{ item.reply_count }}</span> {{ '/' + item.visit_count }}</span>
+                            </h6>
+                            <h6>{{ dateToLest(item.last_reply_at) }}</h6>  
                         </div>
                     </div>
                 </router-link>
@@ -274,8 +305,21 @@
             }
         },
         methods: {
-                check (event) {
-                    this.active = this.inputVal.length ? "active" : "";
+                dateToLest (dateString = "") {
+                    const disMin = Math.floor((new Date() - new Date(dateString))/1000/60);
+                    let tip = "刚刚";
+                    if (Math.floor(disMin/60/24/365) > 0) {
+                        tip = Math.floor(disMin/60/24/365) + "年前";
+                    } else if (Math.floor(disMin/60/24/30) > 0) {
+                        tip = Math.floor(disMin/60/24/30) + "月前";
+                    } else if (Math.floor(disMin/60/24) > 0) {
+                        tip = Math.floor(disMin/60/24) + "天前";
+                    } else if (Math.floor(disMin/60) > 0) {
+                        tip = Math.floor(disMin/60) + "小时前";
+                    } else if (disMin > 1) {
+                        tip = disMin + "分钟前";
+                    }
+                    return tip;
                 },
                 fetch (cell) {
                     let self = this;

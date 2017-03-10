@@ -174,7 +174,7 @@
         },
         mounted () {
             let self = this;
-            const username = Auth.getLocalToken() ? Auth.getLocalToken().user_name : "";
+            const username = this.$route.params.username;
             this.getUserMember(username)
             .then((lastData) => {
                 self.dataFetchDown = true;

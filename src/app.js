@@ -32,15 +32,14 @@ const auth = (to, from, next) => {
     } else {
         Auth.delLocalToken();
         to.name === "login" ? next() : next("login");
-        
     }
 }
 
 const routes = [
     { name: 'home', path: '/', component: Home },
     { name: 'login', path: '/login', component: Login, beforeEnter: auth },
+    { name: 'member', path: '/user/:username', component: Member},
     { name: 'topic', path: '/:tab/:id', component: Topic },
-    { name: 'member', path: '/member', component: Member, beforeEnter: auth },
     { path: '*', redirect: '/' }
 ]
 

@@ -62,22 +62,15 @@ const webpackConfig = {
     },
     vue: {
         loaders: {
-            css: ExtractTextPlugin.extract({ fallback: 'vue-style-loader', use: ['css-loader', 'sass-loader'] })
+            css: ExtractTextPlugin.extract({ fallback: 'vue-style-loader', use: ['css-loader', 'sass-loader', 'postcss-loader'] }),
         }
     }
 };
 
-rimraf(config.paths.build(), function () {
-    console.log(arguments)
-});
-
 const APP_ENTRY = config.paths.client('app.js');
 
 webpackConfig.entry = {
-    app: __DEV__ ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=/__webpack_hmr`) : [APP_ENTRY],
-    vendor: [
-        'vue'
-    ]
+    app: __DEV__ ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=/__webpack_hmr`) : [APP_ENTRY]
 };
 
 webpackConfig.output = {
@@ -122,6 +115,11 @@ webpackConfig.module.loaders.push({
             'scss': 'vue-style-loader!css-loader!sass-loader'
         }
     }
+});
+
+webpackConfig.module.loaders.push({
+    test: /\.css$/,
+    loader: 'style!css!sass'
 });
 
 

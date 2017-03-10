@@ -53,17 +53,23 @@
         </div>
         <nav>
             <div class="nav-wrapper">
-                <div class="col s12" v-if="topic">
-                    <router-link :to="{name:'home', params:{ tab: tab }}" class="breadcrumb"> {{ tabs[tab].title }} </router-link>
-                    <span class="breadcrumb">{{ topic.title }}</span>
+                <div class="col s12" v-if="topicInfo">
+                    <router-link :to="{name:'home', params:{ tab: tab }}" class="breadcrumb"> {{ tab && getTab(tab) }} </router-link>
+                    <span class="breadcrumb">{{ topicInfo.title && topicInfo.title }}</span>
                 </div>
             </div>
         </nav>
         <div class="row">
             <div class="col s12 m12">
-                <div class="body" v-html="topic && topic.content">
+                <div class="body" v-html="topicInfo && topicInfo.content">
                     <!--{{topic && topic.content}}-->
                 </div>
+                <br/>
+                <ul class="collection" v-if="topicInfo && topicInfo.replies" >
+                    <cm-reply :replyInfo="item" v-for="(item, index) in topicInfo.replies" :authorId="topicInfo.author_id " :index="index"></cm-reply>
+                </ul>
+                <br/>
+                
             </div>
         </div>
     </div>
@@ -73,39 +79,48 @@
     import axios from 'axios';
     import Vue from 'vue';
 
-    import {markdown} from 'markdown';
+    import { markdown } from 'markdown';
 
     import Load from '../compontents/Load';
+    import Reply from '../compontents/Reply';
 
     Vue.component('cm-loading', Load);
+    Vue.component('cm-reply', Reply);
+
+    // Vue.use(VueCodeMirror);
 
     export default {
         data () {
             return {
                 dataFetchDown: false,
-                topic: null,
-                tab: null,
-                tabs: {
-                    "all": {
-                        title: "全部"
-                    },
-                    "good": {
-                        title: "精华"
-                    },
-                    "share": {
-                        title: "分享"
-                    },
-                    "ask": {
-                        title: "问答"
-                    },
-                    "job": {
-                        title: "招聘"
-                    }
-                }
+                topicInfo: null,
+                tab: null
             }
         },
         methods: {
-            getRoute () {
+            getTab (tabEn) {
+                let tab = "";
+                switch (tabEn) {
+                    case "all":
+                        tab = "全部";
+                        break;
+                    case "good":
+                        tab = "精华";
+                        break;
+                    case "share":
+                        tab = "分享";
+                        break;
+                    case "ask":
+                        tab = "问答";
+                        break;
+                    case "job":
+                        tab = "招聘";
+                        break;
+                    default:
+                        tab = "全部";
+                        break;
+                }
+                return tab;
             }
         },
         mounted () {
@@ -120,11 +135,9 @@
             })
             .then((response) => {
                 self.dataFetchDown = true;
-                self.topic = response.data.data;
-                // self.topic.content = markdown.toHTML( self.topic.content );
+                self.topicInfo = response.data.data;
             })
             .catch((error) => {
-                console.log(error);
                 self.dataFetchDown = true;
             });
         }
