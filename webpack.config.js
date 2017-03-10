@@ -49,7 +49,7 @@ config.paths = {
 const webpackConfig = {
     name: 'client',
     target: 'web',
-    devtool: 'source-map',
+    devtool:  __DEV__ ? 'source-map' : false,
     resolve: {
         root: base('src'),
         extensions: ['', '.js', '.vue', '.json']
