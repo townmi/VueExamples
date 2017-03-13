@@ -122,5 +122,25 @@ webpackConfig.module.loaders.push({
     loader: 'style!css!sass'
 });
 
+if (__DEV__) {
+    debug('Enable plugins for live development (HMR, NoErrors).');
+    webpackConfig.plugins.push(
+        new webpack.HotModuleReplacementPlugin(),
+        new webpack.NoErrorsPlugin()
+    )
+} else if (__PROD__) {
+    debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).');
+    webpackConfig.plugins.push(
+        new webpack.optimize.OccurrenceOrderPlugin(),
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                unused: true,
+                dead_code: true,
+                warnings: false
+            }
+        })
+    )
+}
 
 module.exports = webpackConfig;
