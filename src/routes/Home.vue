@@ -23,49 +23,12 @@
                 color: rgba(41, 98, 255, 1);
             }
         }
-        .collapsible, .row:last-child {
-            margin-bottom: 0;
-        }
         .pagination {
             padding: 15px 0;
             text-align: center;
             li.active {
                 background-color: #2962FF;
             }
-        }
-    }
-    .collapsible-header {
-        span.good, span.top, span.tab {
-            padding: 2px 7px;
-            margin-right: 0.5rem;
-            border-radius: 2px;
-            font-size: 12px;
-            color: #ffffff;
-        }
-        span.good, span.top {
-            background-color: #2962FF;
-        }
-        span.tab {
-            background-color: #c4c4c4;
-        }
-        span.title {
-            width: 70%;
-            position: relative;
-            top: 8px;
-            display: inline-block;
-            line-height: 22px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-        img {
-            width: 100%;
-            vertical-align: sub;
-        }
-    }
-    .collapsible-body {
-        .collapsible {
-            display: none;
         }
     }
     @media only screen and (max-width: 768px) {
@@ -83,86 +46,6 @@
                 text-align: center;
             }
         }
-        .collection {
-            border-left: none;
-            border-right: none;
-            border-radius: 0;
-        }
-        .collection-item {
-            .top-title {
-                height: 22px;
-                .tip {
-                    width: 13%;
-                    float: left;
-                    text-align: center;
-                    border-radius: 2px;
-                    color: #ffffff;
-                    font-size: 12px;
-                    &.good, &.top {
-                        background-color: #2962FF;
-                    }
-                    &.tab {
-                        background-color: #c4c4c4;
-                    }
-                }
-                .title {
-                    width: 85%;
-                    height: 22px;
-                    float: right;
-                    display: inline-block;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-            }
-            .bottom-user {
-                margin: 1rem 0 0 0;
-                display: flex;
-                &>div {
-                    height: 44px;
-                    flex: 1;
-                }
-                h6 {
-                    margin: 0;
-                    padding: 0;
-                    height: 22px;
-                    line-height: 22px;
-                    text-align: right;
-                    color: #757575;
-                    &:last-child {
-                        padding: 0 6px;
-                    }
-                }
-                .avatar {
-                    width: 30%;
-                    max-width: 55px;
-                    height: 44px;
-                    line-height: 44px;
-                    overflow: hidden;
-                    float: left;
-                    text-align: left;
-                }
-                p {
-                    width: 70%;
-                    margin: 0;
-                    float: left;
-                    line-height: 22px;
-                    color: #333333;
-
-                    span {
-                        display: block;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        white-space: nowrap;
-                    }
-                }
-            }
-            img {
-                width: 80%;
-                vertical-align: middle;
-                border-radius: 5px;
-            }
-        }
     }
 </style>
 <template>
@@ -177,75 +60,32 @@
         <div v-if="!dataFetchDown" class="loading">
             <cm-loading></cm-loading>
         </div>
-        <ul :class="isMobile ? 'collection' : 'collapsible'" data-collapsible="accordion" v-if="topicList.length">
-            <li v-for="item in topicList" v-if="!isMobile">
-                <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
-                    <div class="collapsible-header">
-                        <router-link :to="{ name: 'member', params: { username: item.author.loginname } }">
-                            <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
-                        </router-link>
-                        <span class="good" v-if="item.good">精华</span>
-                        <span class="top" v-if="item.top">置顶</span>
-                        <span class="tab" v-if="!item.good && !item.top">{{ routers[item.tab] && routers[item.tab].title }}</span>
-                        <span class="title">{{ item.title }}</span>
-                        <span class="badge">{{ item.reply_count + '/' + item.visit_count }}</span>
-                    </div>
-                    <!--<div class="collapsible-body">{{ 'v-html="item.content"' }}</div>-->
-                </router-link>
-            </li>
-            <li class="collection-item" v-for="item in topicList" v-if="isMobile">
-                <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
-                    <div class="top-title">
-                        <span class="tip good" v-if="item.good">精华</span>
-                        <span class="tip top" v-if="item.top">置顶</span>
-                        <span class="tip tab" v-if="!item.good && !item.top">{{ routers[item.tab] && routers[item.tab].title }}</span>
-                        <span class="title">{{ item.title }}</span>
-                    </div>
-                    <div class="bottom-user">
-                        <div>
-                            <div class="avatar">
-                                <router-link :to="{ name: 'member', params: { username: item.author.loginname } }">
-                                    <img v-bind:src="item.author.avatar_url"/>
-                                </router-link>
-                            </div>
-                            <p>
-                                <span> {{ item.author.loginname }} </span>
-                                <span> {{ dateToLest(item.create_at) }} </span>
-                            </p>
-                        </div>
-                        <div>
-                            <h6>
-                                <span class="badge"><span style="color: #2979ff;">{{ item.reply_count }}</span> {{ '/' + item.visit_count }}</span>
-                            </h6>
-                            <h6>{{ dateToLest(item.last_reply_at) }}</h6>  
-                        </div>
-                    </div>
-                </router-link>
-            </li>
-            <li>
-                <ul class="pagination">
-                    <li :class="page === 1 ? 'disabled' : ''">
-                        <a href="javascript:;" v-on:click="fetch('prev')">
-                            <i class="material-icons">chevron_left</i>
-                        </a>
-                    </li>
-                    <li v-if="!lastPage && page < 4" :class="n == page ? 'active' : ''" v-for="n in 5">
-                        <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
-                    </li>
-                    <li v-if="!lastPage && page > 3 && n > page-3" :class="n == page ? 'active' : ''" v-for="n in page+2">
-                        <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
-                    </li>
-                    <li v-if="lastPage && n > page-5" :class="n == page ? 'active' : ''" v-for="n in page">
-                        <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
-                    </li>
-                    <li :class="lastPage ? 'disabled' : ''">
-                        <a href="javascript:;" v-on:click="fetch('next')">
-                            <i class="material-icons">chevron_right</i>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        </ul>
+       
+        <cm-list-cell :topicList="topicList" v-if="topicList.length" :tab="tab"></cm-list-cell>
+        
+        <div>
+            <ul class="pagination">
+                <li :class="page === 1 ? 'disabled' : ''">
+                    <a href="javascript:;" v-on:click="fetch('prev')">
+                        <i class="material-icons">chevron_left</i>
+                    </a>
+                </li>
+                <li v-if="!lastPage && page < 4" :class="n == page ? 'active' : ''" v-for="n in 5">
+                    <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
+                </li>
+                <li v-if="!lastPage && page > 3 && n > page-3" :class="n == page ? 'active' : ''" v-for="n in page+2">
+                    <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
+                </li>
+                <li v-if="lastPage && n > page-5" :class="n == page ? 'active' : ''" v-for="n in page">
+                    <a href="javascript:;" v-on:click="fetch(n)">{{ n }}</a>
+                </li>
+                <li :class="lastPage ? 'disabled' : ''">
+                    <a href="javascript:;" v-on:click="fetch('next')">
+                        <i class="material-icons">chevron_right</i>
+                    </a>
+                </li>
+            </ul>
+        </div>
         <br/>
     </div>
 </template>
@@ -255,14 +95,13 @@
     import Vue from 'vue';
 
     import Load from '../compontents/Load';
-
+    import ListCell from '../compontents/ListCell';
     Vue.component('cm-loading', Load);
+    Vue.component('cm-list-cell', ListCell);
 
     export default {
         data () {
             return {
-                inputVal: "",
-                active: "",
                 page: 1,
                 tab: 'all',
                 limit: 10,

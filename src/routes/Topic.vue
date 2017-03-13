@@ -16,10 +16,15 @@
                 color: #2962FF;
             }
         }
+        #editor {
+            width: 100%;
+            height: 300px;
+        }
     }
     .root {
         background-color: #f2f2f2;
     }
+    
     @media only screen and (max-width: 768px) {
         nav .nav-wrapper {
             width: 90%;
@@ -65,11 +70,11 @@
                     <!--{{topic && topic.content}}-->
                 </div>
                 <br/>
-                <ul class="collection" v-if="topicInfo && topicInfo.replies" >
+                <ul class="collection" v-if="topicInfo && topicInfo.replies.length && topicInfo.replies" >
                     <cm-reply :replyInfo="item" v-for="(item, index) in topicInfo.replies" :authorId="topicInfo.author_id " :index="index"></cm-reply>
                 </ul>
                 <br/>
-                
+                <cm-commit :topicId="topicInfo.id" v-if="authToken && topicInfo"></cm-commit>
             </div>
         </div>
     </div>
@@ -79,22 +84,23 @@
     import axios from 'axios';
     import Vue from 'vue';
 
-    import { markdown } from 'markdown';
+    import Auth from '../services/authToken';
 
     import Load from '../compontents/Load';
     import Reply from '../compontents/Reply';
+    import Commit from '../compontents/Commit';
 
     Vue.component('cm-loading', Load);
     Vue.component('cm-reply', Reply);
-
-    // Vue.use(VueCodeMirror);
+    Vue.component('cm-commit', Commit);
 
     export default {
         data () {
             return {
                 dataFetchDown: false,
                 topicInfo: null,
-                tab: null
+                tab: null,
+                authToken: false
             }
         },
         methods: {
@@ -124,6 +130,11 @@
             }
         },
         mounted () {
+            const token = Auth.getLocalToken() && Auth.getLocalToken().user_accessToken ? Auth.getLocalToken().user_accessToken : "";
+            if(!!token && /^[a-z0-9\-]+$/g.test(token)) {
+                this.authToken = true;
+            }
+            
             let self = this;
             const topicId  = this.$route.params.id;
             self.tab = this.$route.params.tab;
@@ -140,6 +151,7 @@
             .catch((error) => {
                 self.dataFetchDown = true;
             });
+
         }
     }
 </script>

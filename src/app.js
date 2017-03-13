@@ -13,6 +13,7 @@ Vue.use(VueRouter);
 import Home from './routes/Home';
 import Login from './routes/Login';
 import Topic from './routes/Topic';
+import NewTopic from './routes/NewTopic';
 import Member from './routes/Member';
 
 const auth = (to, from, next) => {
@@ -38,16 +39,20 @@ const auth = (to, from, next) => {
 const routes = [
     { name: 'home', path: '/', component: Home },
     { name: 'login', path: '/login', component: Login, beforeEnter: auth },
-    { name: 'member', path: '/user/:username', component: Member},
+    { name: 'member', path: '/user/:username', component: Member },
+    { name: 'newTopic', path: '/new', component: NewTopic },
     { name: 'topic', path: '/:tab/:id', component: Topic },
     { path: '*', redirect: '/' }
 ]
 
 const router = new VueRouter({
-    routes
-})
+    routes,
+    mode: 'hash'
+});
 
-new Vue({
+const app = new Vue({
     router,
     render: h => h(App)
 }).$mount('#root');
+
+

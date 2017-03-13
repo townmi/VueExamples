@@ -1,8 +1,10 @@
 <template>
     <li class="collection-item avatar">
-        <i class="mdi-file-folder circle">
-            <img :src="replyInfo.author.avatar_url" /> 
-        </i>
+        <router-link :to="{ name: 'member', params: { username: replyInfo.author.loginname } }">
+            <i class="mdi-file-folder circle">
+                <img :src="replyInfo.author.avatar_url" /> 
+            </i>
+        </router-link>
         <div class="title">
             <span> {{ replyInfo.author.loginname }} </span>
             <span> {{ (index+1)+'楼' }} </span>
@@ -14,6 +16,7 @@
 </template>
 <script type="text/babel">
     export default {
+        name: "cm-reply",
         data () {
             return {
 

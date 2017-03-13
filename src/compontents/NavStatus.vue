@@ -16,7 +16,7 @@
                 <li><a href="#">新手入门</a></li>
                 <li v-if="!authStatus"><router-link to="/login">登录</router-link></li>
                 <li v-if="authStatus" class="avatar">
-                    <router-link to="/member">
+                    <router-link :to="{ name: 'member', params: { username: authInfo.user_name } }">
                         <img :src="authInfo && authInfo.user_avatar" :title="authInfo && authInfo.user_name"/>
                     </router-link>
                 </li>

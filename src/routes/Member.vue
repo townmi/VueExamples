@@ -1,51 +1,5 @@
 <style lang="sass" scoped>
     .member {
-        .collapsible, .row:last-child {
-            margin-bottom: 0;
-        }
-        .collapsible-header {
-            span.good, span.top, span.tab {
-                padding: 2px 7px;
-                margin-right: 0.5rem;
-                border-radius: 2px;
-                font-size: 12px;
-                color: #ffffff;
-            }
-            span.good, span.top {
-                background-color: #2962FF;
-            }
-            span.tab {
-                background-color: #c4c4c4;
-            }
-            span.title {
-                width: 70%;
-                position: relative;
-                top: 8px;
-                display: inline-block;
-                line-height: 22px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            img {
-                width: 100%;
-                vertical-align: sub;
-            }
-        }
-        .collapsible-body {
-            .collapsible {
-                display: none;
-            }
-        }
-        .block_title {
-            text-align: left;
-        }
-        .more {
-            text-align: right;
-            .fa {
-                font-size: 16px;
-            }
-        }
         .card {
             .fa {
                 font-size: 20px;
@@ -67,47 +21,9 @@
             <br/>
             <div class="row">
                 <div class="col s10 m9">
-                    <ul class="collapsible" data-collapsible="accordion" v-if="memberInfo.recent_replies && memberInfo.recent_replies.length">
-                        <li class="block_title">
-                            <div class="collapsible-header">
-                                最近创建的话题
-                            </div>
-                        </li>
-                        <li v-for="item in memberInfo.recent_replies">
-                            <router-link :to="{ name: 'topic', params: { tab: 'all', id: item.id } }">
-                                <div class="collapsible-header">
-                                    <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
-                                    <span class="title">{{ item.title }}</span>
-                                </div>
-                            </router-link>
-                        </li>
-                        <li class="more">
-                            <div class="collapsible-header">
-                                <a>查看更多 &nbsp;<em class="fa fa-angle-right" aria-hidden="true"></em></a>
-                            </div>
-                        </li>
-                    </ul>
+                    <cm-list-cell :title="'最近创建的话题'" :topicList="memberInfo.recent_replies" v-if="memberInfo && memberInfo.recent_replies && memberInfo.recent_replies.length" :tab="'all'"></cm-list-cell>
                     <br/>
-                    <ul class="collapsible" data-collapsible="accordion" v-if="memberInfo.recent_topics && memberInfo.recent_topics.length">
-                        <li class="block_title">
-                            <div class="collapsible-header">
-                                最近创建的话题
-                            </div>
-                        </li>
-                        <li v-for="item in memberInfo.recent_topics">
-                            <router-link :to="{ name: 'topic', params: { tab: 'all', id: item.id } }">
-                                <div class="collapsible-header">
-                                    <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
-                                    <span class="title">{{ item.title }}</span>
-                                </div>
-                            </router-link>
-                        </li>
-                        <li class="more">
-                            <div class="collapsible-header">
-                                <a>查看更多 &nbsp;<em class="fa fa-angle-right" aria-hidden="true"></em></a>
-                            </div>
-                        </li>
-                    </ul>
+                    <cm-list-cell :title="'最近参与的话题'" :topicList="memberInfo.recent_topics" v-if="memberInfo && memberInfo.recent_topics && memberInfo.recent_topics.length" :tab="'all'"></cm-list-cell>
                     <br/>
                 </div>
 
@@ -127,9 +43,6 @@
                     </div>
                 </div>
             </div>
-
-            
-
             <div v-if="!dataFetchDown" class="loading">
                 <cm-loading></cm-loading>
             </div>
@@ -143,8 +56,9 @@
     import Auth from '../services/authToken';
 
     import Load from '../compontents/Load';
-
+    import ListCell from '../compontents/ListCell';
     Vue.component('cm-loading', Load);
+    Vue.component('cm-list-cell', ListCell);
 
     export default {
         data () {
