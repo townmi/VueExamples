@@ -135,9 +135,9 @@
         </li>
         <li v-for="item in topicList" v-if="!isMobile">
             <div class="collapsible-header">
-                <router-link :to="{ name: 'member', params: { username: item.author.loginname } }">
+                <a :href="rePath(item.author.loginname)">
                     <i class="material-icons"><img v-bind:src="item.author.avatar_url"/></i>
-                </router-link>
+                </a>
                 <span class="good" v-if="!item.top && item.good" >精华</span>
                 <span class="top" v-if="item.top">置顶</span>
                 <span class="tab" v-if="!item.good && !item.top && item.tab">{{ routers[item.tab] && routers[item.tab].title }}</span>
@@ -150,17 +150,17 @@
         <li class="collection-item" v-for="item in topicList" v-if="isMobile">
             <router-link :to="{ name: 'topic', params: { tab: tab, id: item.id } }">
                 <div class="top-title">
-                    <span class="tip good" v-if="item.good">精华</span>
+                    <span class="tip good" v-if="!item.top && item.good">精华</span>
                     <span class="tip top" v-if="item.top">置顶</span>
-                    <span class="tip tab" v-if="!item.good && !item.top">{{ routers[item.tab] && routers[item.tab].title }}</span>
+                    <span class="tip tab" v-if="!item.good && !item.top && item.tab">{{ routers[item.tab] && routers[item.tab].title }}</span>
                     <span class="title">{{ item.title }}</span>
                 </div>
                 <div class="bottom-user">
                     <div>
                         <div class="avatar">
-                            <router-link :to="{ name: 'member', params: { username: item.author.loginname } }">
+                            <a :href="rePath(item.author.loginname)">
                                 <img v-bind:src="item.author.avatar_url"/>
-                            </router-link>
+                            </a>
                         </div>
                         <p>
                             <span> {{ item.author.loginname }} </span>
@@ -185,7 +185,8 @@
 </template>
 
 <script type="text/babel">
-
+    import { dateToLest } from '../services/utils';
+    
     export default {
         data () {
             return {
@@ -226,21 +227,9 @@
         },
         props: ["topicList", "tab", "title"],
         methods: {
-                dateToLest (dateString = "") {
-                    const disMin = Math.floor((new Date() - new Date(dateString))/1000/60);
-                    let tip = "刚刚";
-                    if (Math.floor(disMin/60/24/365) > 0) {
-                        tip = Math.floor(disMin/60/24/365) + "年前";
-                    } else if (Math.floor(disMin/60/24/30) > 0) {
-                        tip = Math.floor(disMin/60/24/30) + "月前";
-                    } else if (Math.floor(disMin/60/24) > 0) {
-                        tip = Math.floor(disMin/60/24) + "天前";
-                    } else if (Math.floor(disMin/60) > 0) {
-                        tip = Math.floor(disMin/60) + "小时前";
-                    } else if (disMin > 1) {
-                        tip = disMin + "分钟前";
-                    }
-                    return tip;
+                dateToLest: dateToLest,
+                rePath (loginname) {
+                    return "/user/"+loginname; 
                 }
         },
         mounted () {

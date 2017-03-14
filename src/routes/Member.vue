@@ -88,7 +88,7 @@
         },
         mounted () {
             let self = this;
-            const username = this.$route.params.username;
+            const username = this.$route.params.id;
             this.getUserMember(username)
             .then((lastData) => {
                 self.dataFetchDown = true;

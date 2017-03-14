@@ -39,7 +39,7 @@ const auth = (to, from, next) => {
 const routes = [
     { name: 'home', path: '/', component: Home },
     { name: 'login', path: '/login', component: Login, beforeEnter: auth },
-    { name: 'member', path: '/user/:username', component: Member },
+    { name: 'member', path: '/user/:id', component: Member },
     { name: 'newTopic', path: '/new', component: NewTopic },
     { name: 'topic', path: '/:tab/:id', component: Topic },
     { path: '*', redirect: '/' }
@@ -47,7 +47,7 @@ const routes = [
 
 const router = new VueRouter({
     routes,
-    mode: 'hash'
+    mode: 'history'
 });
 
 const app = new Vue({

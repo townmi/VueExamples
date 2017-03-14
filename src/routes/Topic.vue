@@ -4,6 +4,9 @@
             max-width: 100%;
         }
         nav {
+            margin-top: 10px;
+            line-height: 42px;
+            height: 42px;
             background-color: transparent;
             box-shadow: none
         }
@@ -58,13 +61,17 @@
         </div>
         <nav>
             <div class="nav-wrapper">
-                <div class="col s12" v-if="topicInfo">
+                <div v-if="topicInfo">
                     <router-link :to="{name:'home', params:{ tab: tab }}" class="breadcrumb"> {{ tab && getTab(tab) }} </router-link>
                     <span class="breadcrumb">{{ topicInfo.title && topicInfo.title }}</span>
                 </div>
             </div>
         </nav>
         <div class="row">
+
+            <div class="col s12 m12 grey-text">
+                  •&nbsp;发布于 <span>{{ topicInfo && dateToLest(topicInfo.create_at) }}</span> &nbsp;&nbsp;•&nbsp;作者 <span>{{ topicInfo && topicInfo.author.loginname }}</span>&nbsp;&nbsp;•&nbsp;<span>{{ topicInfo && topicInfo.visit_count}}</span>次浏览&nbsp;&nbsp;•&nbsp;来自 <span>{{ getTab(tab) }}</span>
+            </div>
             <div class="col s12 m12">
                 <div class="body" v-html="topicInfo && topicInfo.content">
                     <!--{{topic && topic.content}}-->
@@ -84,6 +91,8 @@
     import axios from 'axios';
     import Vue from 'vue';
 
+
+    import { dateToLest } from '../services/utils';
     import Auth from '../services/authToken';
 
     import Load from '../compontents/Load';
@@ -127,7 +136,8 @@
                         break;
                 }
                 return tab;
-            }
+            },
+            dateToLest: dateToLest
         },
         mounted () {
             const token = Auth.getLocalToken() && Auth.getLocalToken().user_accessToken ? Auth.getLocalToken().user_accessToken : "";
@@ -147,6 +157,7 @@
             .then((response) => {
                 self.dataFetchDown = true;
                 self.topicInfo = response.data.data;
+                console.log(self.topicInfo)
             })
             .catch((error) => {
                 self.dataFetchDown = true;
