@@ -73,7 +73,7 @@
             </a>
             <ul>
                 <li><router-link to="/" class="btn-floating red"><i class="fa fa-home" aria-hidden="true"></i></router-link></li>
-                <li><router-link to="/new" class="btn-floating yellow darken-1"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></router-link></li>
+                <li v-if="showNewBar"><router-link to="/new" class="btn-floating yellow darken-1"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></router-link></li>
                 <li><a class="btn-floating green" v-on:click="toTop"><i class="material-icons">publish</i></a></li>
                 <!--<li><a class="btn-floating blue"><i class="material-icons">attach_file</i></a></li>-->
             </ul>
@@ -83,6 +83,7 @@
 <script type="text/babel">
     import Vue from 'vue';
 
+    import Auth from './services/authToken';
     import NavStatus from './compontents/NavStatus';
 
     Vue.component('cm-nav', NavStatus);
@@ -91,7 +92,8 @@
         name: 'root',
         data () {
             return {
-                fixActionClass: "fixed-action-btn"
+                fixActionClass: "fixed-action-btn",
+                showNewBar: false
             }
         },
         methods: {
@@ -103,6 +105,12 @@
             },
             toTop () {
                 document.body.scrollTop = 0
+            }
+        },
+        mounted () {
+            const userInfo = Auth.getLocalToken();
+            if(!!userInfo) {
+                this.showNewBar = true;
             }
         }
     }

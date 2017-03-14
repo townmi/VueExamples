@@ -40,7 +40,7 @@ const routes = [
     { name: 'home', path: '/', component: Home },
     { name: 'login', path: '/login', component: Login, beforeEnter: auth },
     { name: 'member', path: '/user/:id', component: Member },
-    { name: 'newTopic', path: '/new', component: NewTopic },
+    { name: 'newTopic', path: '/new', component: NewTopic, beforeEnter: auth },
     { name: 'topic', path: '/:tab/:id', component: Topic },
     { path: '*', redirect: '/' }
 ]
