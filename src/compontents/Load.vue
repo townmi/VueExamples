@@ -43,6 +43,6 @@
 </template>
 <script type="text/babel">
     export default {
-        
+        name: "cm-loading"
     }
 </script>

@@ -49,7 +49,7 @@ config.paths = {
 const webpackConfig = {
     name: 'client',
     target: 'web',
-    devtool:  __PROD__ ? false : 'source-map',
+    devtool: __PROD__ ? false : 'source-map',
     resolve: {
         root: base('src'),
         extensions: ['', '.js', '.vue', '.json']
@@ -70,17 +70,20 @@ const webpackConfig = {
 const APP_ENTRY = config.paths.client('app.js');
 
 webpackConfig.entry = {
-    app: __DEV__ ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=/__webpack_hmr`) : [APP_ENTRY]
+    app: __DEV__ ? [APP_ENTRY].concat(`webpack-hot-middleware/client?path=/__webpack_hmr`) : [APP_ENTRY],
+    vendor: ['vue', 'vue-router'],
 };
 
 webpackConfig.output = {
-    filename: `[name].[hash].js`,
+    filename: `[name].[hash:8].js`,
     path: config.paths.build(),
     publicPath: '/'
 };
 
 webpackConfig.plugins = [
-    new webpack.DefinePlugin(config.globals),
+    new webpack.optimize.CommonsChunkPlugin({
+        name : 'vendor'// also can a array
+    }),
     new HtmlWebpackPlugin({
         template: config.paths.client('index.html'),
         hash: false,
@@ -125,12 +128,18 @@ webpackConfig.module.loaders.push({
 if (__DEV__) {
     debug('Enable plugins for live development (HMR, NoErrors).');
     webpackConfig.plugins.push(
+        new webpack.DefinePlugin(config.globals),
         new webpack.HotModuleReplacementPlugin(),
         new webpack.NoErrorsPlugin()
     )
 } else if (__PROD__) {
     debug('Enable plugins for production (OccurenceOrder, Dedupe & UglifyJS).');
     webpackConfig.plugins.push(
+        new webpack.DefinePlugin({
+            'process.env': {
+                NODE_ENV: '"production"'
+            }
+        }),
         new webpack.optimize.OccurrenceOrderPlugin(),
         new webpack.optimize.DedupePlugin(),
         new webpack.optimize.UglifyJsPlugin({

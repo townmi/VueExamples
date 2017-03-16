@@ -26,8 +26,6 @@
     </nav>
 </template>
 <script type="text/babel">
-    import Vue from 'vue';
-
     import Auth from '../services/authToken';
 
     export default {

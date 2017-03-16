@@ -53,12 +53,10 @@
 </template>
 <script type="text/babel">
     import axios from 'axios';
-    import Vue from 'vue';
 
     import Auth from '../services/authToken';
     import Load from '../compontents/Load';
 
-    Vue.component('cm-loading', Load);
     export default {
         name: "cm-commit",
         data () {
@@ -139,6 +137,9 @@
             } else {
                 initEditor()
             }
+        },
+        components: {
+            "cm-loading": Load
         }
     }
 

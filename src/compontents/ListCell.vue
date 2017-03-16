@@ -188,6 +188,7 @@
     import { dateToLest } from '../services/utils';
     
     export default {
+        name: "cm-list-cell",
         data () {
             return {
                 isMobile: /mobile/i.test(navigator.userAgent),

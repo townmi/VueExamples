@@ -78,7 +78,7 @@
                 </div>
                 <br/>
                 <ul class="collection" v-if="topicInfo && topicInfo.replies.length && topicInfo.replies" >
-                    <cm-reply :replyInfo="item" v-for="(item, index) in topicInfo.replies" :authorId="topicInfo.author_id " :index="index"></cm-reply>
+                    <cm-reply :replyInfo="item" v-for="(item, index) in topicInfo.replies" :authorId="topicInfo.author_id " :index="index" :key="topicInfo.id"></cm-reply>
                 </ul>
                 <br/>
                 <cm-commit :topicId="topicInfo.id" v-if="authToken && topicInfo"></cm-commit>
@@ -89,8 +89,6 @@
 
 <script type="text/babel">
     import axios from 'axios';
-    import Vue from 'vue';
-
 
     import { dateToLest } from '../services/utils';
     import Auth from '../services/authToken';
@@ -98,10 +96,6 @@
     import Load from '../compontents/Load';
     import Reply from '../compontents/Reply';
     import Commit from '../compontents/Commit';
-
-    Vue.component('cm-loading', Load);
-    Vue.component('cm-reply', Reply);
-    Vue.component('cm-commit', Commit);
 
     export default {
         data () {
@@ -163,6 +157,11 @@
                 self.dataFetchDown = true;
             });
 
+        },
+        components: {
+            "cm-loading": Load, 
+            "cm-reply": Reply,
+            "cm-commit": Commit
         }
     }
 </script>

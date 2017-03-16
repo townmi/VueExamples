@@ -92,12 +92,9 @@
 
 <script type="text/babel">
     import axios from 'axios';
-    import Vue from 'vue';
 
     import Load from '../compontents/Load';
     import ListCell from '../compontents/ListCell';
-    Vue.component('cm-loading', Load);
-    Vue.component('cm-list-cell', ListCell);
 
     export default {
         data () {
@@ -244,6 +241,10 @@
                 self.tab = this.$route.params.tab;
             }
             this.__fetch();
+        },
+        components: {
+            "cm-loading": Load, 
+            "cm-list-cell": ListCell
         }
     };
 </script>

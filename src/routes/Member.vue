@@ -51,14 +51,11 @@
 
 <script type="text/babel">
     import axios from 'axios';
-    import Vue from 'vue';
 
     import Auth from '../services/authToken';
 
     import Load from '../compontents/Load';
     import ListCell from '../compontents/ListCell';
-    Vue.component('cm-loading', Load);
-    Vue.component('cm-list-cell', ListCell);
 
     export default {
         data () {
@@ -95,6 +92,10 @@
                 self.memberInfo = lastData.data;
             })
             
+        },
+        components: {
+            "cm-loading": Load, 
+            "cm-list-cell": ListCell
         }
     };
 </script>
