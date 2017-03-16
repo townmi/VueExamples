@@ -29,7 +29,7 @@
     import Auth from '../services/authToken';
 
     export default {
-        name: 'root',
+        name: 'cm-nav',
         data () {
             return {
                 authStatus: false,

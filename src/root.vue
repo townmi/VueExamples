@@ -81,12 +81,9 @@
     </div>
 </template>
 <script type="text/babel">
-    import Vue from 'vue';
 
     import Auth from './services/authToken';
     import NavStatus from './compontents/NavStatus';
-
-    Vue.component('cm-nav', NavStatus);
 
     export default {
         name: 'root',
@@ -112,6 +109,9 @@
             if(!!userInfo) {
                 this.showNewBar = true;
             }
+        },
+        components: {
+            "cm-nav": NavStatus
         }
     }
 </script>
